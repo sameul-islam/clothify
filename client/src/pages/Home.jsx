@@ -1,12 +1,13 @@
 import React from 'react'
 import Hero from '../components/Hero/Hero'
-import Body from '../components/Hero/Body'
+import CollectionShowcase from '../components/Body/CollectionShowcase'
+
 
 const Home = () => {
   return (
     <div>
       <Hero/>
-      <Body/>
+      <CollectionShowcase/>
     </div>
   )
 }

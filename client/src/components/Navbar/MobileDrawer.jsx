@@ -1,27 +1,16 @@
 import { useEffect, useState } from "react";
 
-import {
-  FiSearch,
-  FiX,
-  FiChevronRight,
-  FiUser,
-  FiHeart,
-} from "react-icons/fi";
+import { FiSearch, FiX, FiChevronRight, FiUser, FiHeart } from "react-icons/fi";
 
 import { DRAWER_ITEMS } from "./navbarData";
+import { Link } from "react-router-dom";
 
-export default function MobileDrawer({
-  open,
-  onClose,
-  wishCount,
-}) {
+export default function MobileDrawer({ open, onClose, wishCount }) {
   const [openSub, setOpenSub] = useState(null);
 
   // Lock Body Scroll
   useEffect(() => {
-    document.body.style.overflow = open
-      ? "hidden"
-      : "";
+    document.body.style.overflow = open ? "hidden" : "";
 
     return () => {
       document.body.style.overflow = "";
@@ -29,9 +18,7 @@ export default function MobileDrawer({
   }, [open]);
 
   const toggleSub = (label) => {
-    setOpenSub((prev) =>
-      prev === label ? null : label
-    );
+    setOpenSub((prev) => (prev === label ? null : label));
   };
 
   return (
@@ -44,7 +31,8 @@ export default function MobileDrawer({
           fixed
           inset-0
           z-300
-          bg-white
+          backdrop-blur-xs
+          bg-white/10
           transition-opacity
           duration-300
           ${
@@ -64,22 +52,18 @@ export default function MobileDrawer({
         className={`
           fixed
           top-0
-          right-1
+          right-0
           z-301
           h-full
           w-[min(360px,85vw)]
-          bg-[--bg]
+          bg-[#FAFAF7]
           flex
           flex-col
           overflow-y-auto
           transition-transform
           duration-500
           ease-[cubic-bezier(0.16,1,0.3,1)]
-          ${
-            open
-              ? "translate-x-0"
-              : "translate-x-full"
-          }
+          ${open ? "translate-x-0" : "translate-x-full"}
         `}
       >
         {/* Header */}
@@ -105,9 +89,7 @@ export default function MobileDrawer({
             "
           >
             SE
-            <span className="italic font-normal">
-              py
-            </span>
+            <span className="italic font-normal">py</span>
           </span>
 
           <button
@@ -144,10 +126,7 @@ export default function MobileDrawer({
             rounded-xs
           "
         >
-          <FiSearch
-            size={16}
-            className="text-[--text-secondary]"
-          />
+          <FiSearch size={16} className="text-[--text-secondary]" />
 
           <input
             type="text"
@@ -170,10 +149,7 @@ export default function MobileDrawer({
           {DRAWER_ITEMS.map((item) => (
             <div key={item.label}>
               <button
-                onClick={() =>
-                  item.sub &&
-                  toggleSub(item.label)
-                }
+                onClick={() => item.sub && toggleSub(item.label)}
                 className="
                   w-full
                   flex
@@ -199,28 +175,21 @@ export default function MobileDrawer({
                       text-[--text-secondary]
                       transition-transform
                       duration-200
-                      ${
-                        openSub === item.label
-                          ? "rotate-90"
-                          : ""
-                      }
+                      ${openSub === item.label ? "rotate-90" : ""}
                     `}
                   >
-                    <FiChevronRight
-                      size={16}
-                    />
+                    <FiChevronRight size={16} />
                   </span>
                 )}
               </button>
 
-              {item.sub &&
-                openSub === item.label && (
-                  <div className="bg-black/2">
-                    {item.sub.map((link) => (
-                      <a
-                        key={link.label}
-                        href="#"
-                        className={`
+              {item.sub && openSub === item.label && (
+                <div className="bg-black/2">
+                  {item.sub.map((link) => (
+                    <a
+                      key={link.label}
+                      href="#"
+                      className={`
                           block
                           px-6
                           pl-9
@@ -237,12 +206,12 @@ export default function MobileDrawer({
                               : "text-[--text-secondary] hover:text-[--text-primary]"
                           }
                         `}
-                      >
-                        {link.label}
-                      </a>
-                    ))}
-                  </div>
-                )}
+                    >
+                      {link.label}
+                    </a>
+                  ))}
+                </div>
+              )}
             </div>
           ))}
         </nav>
@@ -259,7 +228,6 @@ export default function MobileDrawer({
           "
         >
           <div className="flex gap-3">
-
             <button
               className="
                 flex-1
@@ -301,7 +269,6 @@ export default function MobileDrawer({
               <FiHeart size={16} />
               Wishlist · {wishCount}
             </button>
-
           </div>
 
           <div
@@ -313,26 +280,17 @@ export default function MobileDrawer({
               tracking-[0.08em]
             "
           >
-            <a
-              href="#"
-              className="hover:text-[--text-primary]"
-            >
+            <Link to="/" className="hover:text-[--text-primary]">
               Store Locator
-            </a>
+            </Link>
 
-            <a
-              href="#"
-              className="hover:text-[--text-primary]"
-            >
+            <Link to="/" className="hover:text-[--text-primary]">
               Contact Us
-            </a>
+            </Link>
 
-            <a
-              href="#"
-              className="hover:text-[--text-primary]"
-            >
+            <Link to="/" className="hover:text-[--text-primary]">
               Track Order
-            </a>
+            </Link>
           </div>
         </div>
       </aside>

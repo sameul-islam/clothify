@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function MegaMenu({ columns }) {
   return (
     <div
@@ -5,9 +7,9 @@ export default function MegaMenu({ columns }) {
         absolute
         top-full
         left-1/2
-        -translate-x-1/2
+        -translate-x-10
         w-195
-        bg-[--bg]
+        bg-[#FAFAF7]
         border-t
         border-b
         border-black/10
@@ -47,7 +49,7 @@ export default function MegaMenu({ columns }) {
               tracking-[0.18em]
               uppercase
               text-[--text-secondary]
-              font-medium
+              font-bold
               mb-4
             "
           >
@@ -56,9 +58,9 @@ export default function MegaMenu({ columns }) {
 
           {/* Links */}
           {col.links.map((link) => (
-            <a
+            <Link
               key={link.label}
-              href="#"
+              to="/"
               className={`
                 block
                 text-[13px]
@@ -74,7 +76,7 @@ export default function MegaMenu({ columns }) {
               `}
             >
               {link.label}
-            </a>
+            </Link>
           ))}
         </div>
       ))}

@@ -14,7 +14,7 @@ import SearchOverlay from "./SearchOverlay";
 import MobileDrawer from "./MobileDrawer";
 
 import { NAV_ITEMS, SECONDARY_LINKS, ANNOUNCEMENT_TEXT } from "./navbarData";
-import { Link, Links } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
@@ -33,7 +33,6 @@ export default function Navbar() {
       <div
         className="
           bg-[--text-primary]
-          text-[--bg]
           text-center
           text-[11px]
           tracking-[0.15em]
@@ -48,7 +47,7 @@ export default function Navbar() {
 
       <header
         className="
-          bg-[--bg]
+          bg-[#FAFAF7]
           border-b
           border-black/10
           sticky
@@ -62,7 +61,8 @@ export default function Navbar() {
             items-center
             justify-between
             px-10
-            h-17
+            h-15
+            md:h-17
             gap-6
             max-md:px-5
           "
@@ -127,9 +127,9 @@ export default function Navbar() {
                   <MegaMenu columns={item.mega} />
                 </div>
               ) : (
-                <a
+                <Link
                   key={item.label}
-                  href="#"
+                  to="/"
                   className="
                     relative
                     text-[12px]
@@ -169,7 +169,7 @@ export default function Navbar() {
                       {item.badge}
                     </span>
                   )}
-                </a>
+                </Link>
               ),
             )}
           </div>
@@ -322,6 +322,8 @@ export default function Navbar() {
                 text-[11px]
                 tracking-[0.12em]
                 uppercase
+                cursor-pointer
+                hover:text-[#C5A882]
                 whitespace-nowrap
                 transition-colors
                 duration-200
