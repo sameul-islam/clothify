@@ -18,12 +18,15 @@ const {
   createProduct,
   getAllProducts,
   getFeaturedProducts,
+  getBestSellerProducts,
 } = require("../controllers/product.controller");
 
 router.post("/", createProduct);
 
 router.get("/", getAllProducts);
 
-router.get("/featured", getFeaturedProducts);
+// router.get("/featured", getFeaturedProducts);
+
+// router.get("/best-seller", getBestSellerProducts);
 
 module.exports = router;
