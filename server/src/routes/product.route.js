@@ -17,16 +17,14 @@ const router = express.Router();
 const {
   createProduct,
   getAllProducts,
-  getFeaturedProducts,
-  getBestSellerProducts,
+  getSingleProduct,
 } = require("../controllers/product.controller");
 
 router.post("/", createProduct);
 
 router.get("/", getAllProducts);
 
-// router.get("/featured", getFeaturedProducts);
+router.get("/:slug", getSingleProduct);
 
-// router.get("/best-seller", getBestSellerProducts);
 
 module.exports = router;

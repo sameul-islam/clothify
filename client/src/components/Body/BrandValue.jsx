@@ -20,7 +20,7 @@ const values = [
 
 export default function BrandValue() {
   return (
-    <section className="w-full bg-white py-24 border-t border-black/5">
+    <section className="w-full  py-24 border-t border-black/5">
 
       {/* Header */}
       <div className="text-center mb-16 px-5">

@@ -16,7 +16,7 @@ export default function NewsLetter() {
 
         {/* Title */}
         <p className="text-[11px] tracking-[0.35em] uppercase text-white/50">
-          Maison Newsletter
+          SEPY Newsletter
         </p>
 
         <h2 className="mt-4 text-2xl md:text-3xl font-light tracking-[0.25em] uppercase">

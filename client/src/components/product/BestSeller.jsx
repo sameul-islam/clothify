@@ -34,7 +34,7 @@ export default function BestSeller() {
   };
 
   return (
-    <section className="w-full bg-white py-20 relative overflow-hidden">
+    <section className="w-full py-20 relative overflow-hidden">
 
       {/* Header */}
       <div className="max-w-7xl mx-auto px-5 flex items-end justify-between mb-10">

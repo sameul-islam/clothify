@@ -56,6 +56,7 @@ const getAllProducts = async (req, res) => {
       bestSeller,
       newArrival,
       category,
+      gender,
       limit,
     } = req.query;
 
@@ -75,6 +76,10 @@ const getAllProducts = async (req, res) => {
 
     if (category) {
       filter.category = category;
+    }
+
+    if(gender) {
+      filter.gender = gender;
     }
 
     let query = Product.find(filter);
@@ -102,63 +107,31 @@ const getAllProducts = async (req, res) => {
 
 
 
-// const getAllProducts = async (req, res) => {
-//   try {
-//     const products = await Product.find();
 
-//     res.status(200).json({
-//       success: true,
-//       products,
-//     });
-//   } catch (error) {
-//     res.status(500).json({
-//       success: false,
-//       message: error.message,
-//     });
-//   }
-// };
+const getSingleProduct = async (req, res) => {
+  try {
+    const product = await Product.findOne({
+      slug: req.params.slug,
+    });
 
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
 
-
-
-
-// const getFeaturedProducts = async (req, res) => {
-//   try {
-//     const products = (await Product.find({ featured: true }));
-
-//     res.status(200).json({
-//       success: true,
-//       products,
-//     });
-//   } catch (error) {
-//     res.status(500).json({
-//       success: false,
-//       message: error.message,
-//     });
-//   }
-// };
-
-
-
-
-// const getBestSellerProducts = async (req, res) => {
-//   try {
-//     const products = await Product.find({
-//       bestSeller: true,
-//     });
-
-//     res.status(200).json({
-//       success: true,
-//       products,
-//     });
-//   } catch (error) {
-//     res.status(500).json({
-//       success: false,
-//       message: error.message,
-//     });
-//   }
-// };
-
+    res.status(200).json({
+      success: true,
+      product,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
 
 
@@ -166,4 +139,5 @@ const getAllProducts = async (req, res) => {
 module.exports = {
   createProduct,
   getAllProducts,
+  getSingleProduct,
 };

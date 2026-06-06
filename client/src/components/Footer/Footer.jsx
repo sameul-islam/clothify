@@ -3,7 +3,7 @@ import { FiInstagram, FiFacebook, FiTwitter, FiYoutube } from "react-icons/fi";
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-white border-t border-black/10 py-20 ">
+    <footer className="w-full border-t border-black/10 py-20 ">
 
       <div className="max-w-6xl mx-auto px-5">
 
@@ -12,7 +12,7 @@ export default function Footer() {
 
           {/* Brand */}
           <div>
-            <h2 className="text-lg tracking-[0.35em] uppercase font-light text-black">
+            <h2 className="text-lg tracking-[0.35em] uppercase font-semibold font-Cormorant text-black">
               SEP<span className="italic">Y</span>
             </h2>
 
@@ -44,41 +44,41 @@ export default function Footer() {
 
           {/* Shop */}
           <div>
-            <h3 className="text-[11px] tracking-[0.35em] uppercase text-black/40 mb-4">
+            <h3 className="text-[11px] tracking-[0.35em] uppercase text-black font-semibold mb-4">
               Shop
             </h3>
 
             <div className="flex flex-col gap-2 text-sm text-black/70">
-              <Link to="/women">Women</Link>
-              <Link to="/men">Men</Link>
-              <Link to="/collections">Collections</Link>
-              <Link to="/sale">Sale</Link>
+              <Link className="hover:text-black/40 transition" to="/women">Women</Link>
+              <Link className="hover:text-black/40 transition" to="/men">Men</Link>
+              <Link className="hover:text-black/40 transition" to="/collections">Collections</Link>
+              <Link className="hover:text-black/40 transition" to="/sale">Sale</Link>
             </div>
           </div>
 
           {/* Support */}
           <div>
-            <h3 className="text-[11px] tracking-[0.35em] uppercase text-black/40 mb-4">
+            <h3 className="text-[11px] tracking-[0.35em] uppercase text-black font-semibold mb-4">
               Support
             </h3>
 
             <div className="flex flex-col gap-2 text-sm text-black/70">
-              <Link>Contact</Link>
-              <Link>Shipping</Link>
-              <Link>Returns</Link>
-              <Link>FAQ</Link>
+              <Link className="hover:text-black/40 transition">Contact</Link>
+              <Link className="hover:text-black/40 transition">Shipping</Link>
+              <Link className="hover:text-black/40 transition">Returns</Link>
+              <Link className="hover:text-black/40 transition">FAQ</Link>
             </div>
           </div>
 
           {/* Legal */}
           <div>
-            <h3 className="text-[11px] tracking-[0.35em] uppercase text-black/40 mb-4">
+            <h3 className="text-[11px] tracking-[0.35em] uppercase text-black font-semibold mb-4">
               Legal
             </h3>
 
             <div className="flex flex-col gap-2 text-sm text-black/70">
-              <Link>Privacy Policy</Link>
-              <Link>Terms of Service</Link>
+              <Link className="hover:text-black/40 transition">Privacy Policy</Link>
+              <Link className="hover:text-black/40 transition">Terms of Service</Link>
             </div>
           </div>
 

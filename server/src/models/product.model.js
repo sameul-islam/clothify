@@ -7,6 +7,13 @@ const productSchema = new mongoose.Schema(
       required: true,
     },
 
+    slug: {
+      type: String,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+
     description: {
       type: String,
       required: true,
@@ -17,9 +24,25 @@ const productSchema = new mongoose.Schema(
       required: true,
     },
 
-    image: {
+    images: {
       type: [String],
       required: true,
+    },
+
+    gender: {
+      type: String,
+      enum: ["men", "women", "unisex"],
+      required: true,
+    },
+
+    sizes: {
+      type: [String],
+      default: [],
+    },
+
+    colors: {
+      type: [String],
+      default: [],
     },
 
     category: {
@@ -30,6 +53,13 @@ const productSchema = new mongoose.Schema(
     stock: {
       type: Number,
       default: 0,
+    },
+
+    discount: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 100,
     },
 
     featured: {
@@ -45,6 +75,18 @@ const productSchema = new mongoose.Schema(
     newArrival: {
       type: Boolean,
       default: false,
+    },
+
+    rating: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 5,
+    },
+
+    numReviews: {
+      type: Number,
+      default: 0,
     },
   },
   {
