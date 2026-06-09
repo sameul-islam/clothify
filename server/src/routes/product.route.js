@@ -18,6 +18,7 @@ const {
   createProduct,
   getAllProducts,
   getSingleProduct,
+  getRelatedProducts,
 } = require("../controllers/product.controller");
 
 router.post("/", createProduct);
@@ -25,6 +26,8 @@ router.post("/", createProduct);
 router.get("/", getAllProducts);
 
 router.get("/:slug", getSingleProduct);
+
+router.get("/:slug/related", getRelatedProducts);
 
 
 module.exports = router;

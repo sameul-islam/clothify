@@ -34,14 +34,14 @@ export default function CollectionShowcase() {
           image={womenImg}
           title="Women"
           subtitle="Refined silhouettes crafted for modern elegance."
-          link="/women"
+          link="/products?gender=women"
         />
 
         <CollectionCard
           image={menImg}
           title="Men"
           subtitle="Tailored essentials designed with timeless appeal."
-          link="/men"
+          link="/products?gender=men"
         />
       </div>
 
@@ -51,7 +51,7 @@ export default function CollectionShowcase() {
           image={newArrivalImg}
           title="New Arrivals"
           subtitle="The latest pieces from our seasonal collection."
-          link="/collections/new-arrivals"
+          link="/products?collection=newArraivals"
           large
         />
       </div>

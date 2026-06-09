@@ -90,7 +90,7 @@ export default function EditorialBanner() {
               "
             >
               Crafted For
-              <span className="italic font-normal">
+              <span className="font-Cormorant">
                 {" "}Modern Elegance
               </span>
             </h2>

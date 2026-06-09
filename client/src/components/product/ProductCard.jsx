@@ -3,13 +3,13 @@ import { FaHeart } from "react-icons/fa6";
 
 export default function ProductCard({ product }) {
   return (
-    <article className="group relative overflow-hidden bg-white">
+    <article className="group relative overflow-hidden ">
 
       {/* Product Image */}
-      <div className="relative overflow-hidden bg-[#f8f8f8]">
+      <div className="relative overflow-hidden">
 
         <img
-          src={product?.image?.[0]}
+          src={product?.images?.[0]}
           alt={product?.title}
           className="
             w-full
@@ -22,9 +22,9 @@ export default function ProductCard({ product }) {
         />
 
         {/* Second Image Hover */}
-        {product?.image?.[1] && (
+        {product?.images?.[1] && (
           <img
-            src={product.image[1]}
+            src={product.images[1]}
             alt={product.title}
             className="
               absolute

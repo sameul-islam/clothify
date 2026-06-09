@@ -9,7 +9,7 @@ export default function BestSeller() {
   useEffect(() => {
     const fetchBestSellers = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/products?best-seller=true&limit=8");
+        const res = await fetch("http://localhost:5000/api/products?bestSeller=true&limit=8");
         const data = await res.json();
         setProducts(data.products || []);
       } catch (err) {
@@ -80,16 +80,15 @@ export default function BestSeller() {
             to={`/product/${product._id}`}
             className="
               min-w-65 md:min-w-75
-              bg-white
               snap-start
               group
             "
           >
 
             {/* Image */}
-            <div className="relative overflow-hidden bg-gray-100">
+            <div className="relative overflow-hidden">
               <img
-                src={product.image?.[0]}
+                src={product.images?.[0]}
                 alt={product.title}
                 className="
                   w-full h-90 object-cover
