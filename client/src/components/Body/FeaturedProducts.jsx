@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
-import ProductCard from "../product/ProductCard"
-
-// import ProductCard from "./ProductCard";
 
 export default function FeaturedProducts() {
   const [products, setProducts] = useState([]);
@@ -15,7 +13,7 @@ export default function FeaturedProducts() {
         setLoading(true);
 
         const response = await fetch(
-          "http://localhost:5000/api/products?featured=true&limit=8"
+          "http://localhost:5000/api/products?featured=true&limit=8",
         );
 
         const data = await response.json();
@@ -24,7 +22,7 @@ export default function FeaturedProducts() {
           throw new Error("Failed to load products");
         }
 
-        setProducts(data.products);
+        setProducts(data.products || []);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -39,7 +37,6 @@ export default function FeaturedProducts() {
     return (
       <section className="py-20 md:py-28">
         <div className="max-w-400 mx-auto px-5 md:px-10">
-
           <div className="text-center mb-14">
             <p className="text-[11px] tracking-[0.25em] uppercase text-neutral-500 mb-3">
               Curated Selection
@@ -72,9 +69,7 @@ export default function FeaturedProducts() {
     return (
       <section className="py-20">
         <div className="text-center">
-          <p className="text-red-500">
-            Failed to load featured products
-          </p>
+          <p className="text-red-500">Failed to load featured products</p>
         </div>
       </section>
     );
@@ -82,12 +77,9 @@ export default function FeaturedProducts() {
 
   return (
     <section className="py-20 md:py-28">
-
       <div className="max-w-400 mx-auto px-5 md:px-10">
-
         {/* Section Header */}
         <div className="flex flex-col items-center text-center mb-14 md:mb-16">
-
           <p
             className="
               text-[11px]
@@ -122,8 +114,8 @@ export default function FeaturedProducts() {
               leading-relaxed
             "
           >
-            Discover our most loved pieces carefully selected
-            for timeless elegance and modern sophistication.
+            Discover our most loved pieces carefully selected for timeless
+            elegance and modern sophistication.
           </p>
         </div>
 
@@ -140,16 +132,57 @@ export default function FeaturedProducts() {
           "
         >
           {products.map((product) => (
-            <ProductCard
+            <article
               key={product._id}
-              product={product}
-            />
+              className="group relative overflow-hidden"
+            >
+              {/* Product Image */}
+              <div className="relative overflow-hidden">
+                <img
+                  src={product?.images?.[0]}
+                  alt={product?.title}
+                  className="w-full aspect-3/4 object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+
+                {/* Second Image Hover */}
+                {product?.images?.[1] && (
+                  <img
+                    src={product.images[1]}
+                    alt={product.title}
+                    className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                  />
+                )}
+
+                {/* Featured Badge */}
+                {product?.featured && (
+                  <span className="absolute top-4 left-4 bg-black text-white text-[10px] uppercase tracking-[0.15em] px-3 py-1">
+                    Featured
+                  </span>
+                )}
+              </div>
+
+               {/* Product Info */}
+               <div className="pt-5 pb-2">
+                <p className="text-[11px] uppercase tracking-[0.15em] text-neutral-500 mb-2">
+                  {product?.category}
+                </p>
+
+                <Link to={`/products/${product?._id}`} className="block text-[15px] text-neutral-900 font-medium mb-2 hover:text-neutral-600 transition-colors" >
+                  {product?.title}
+                </Link>
+
+                  <p className="text-[15px] font-light tracking-wide text-neutral-900">
+                     ${product?.price?.toLocaleString()}
+                  </p>
+
+               </div>
+
+            </article>
           ))}
         </div>
 
         {/* View All */}
         <div className="flex justify-center mt-16 md:mt-20">
-
           <button
             className="
               border
@@ -168,11 +201,8 @@ export default function FeaturedProducts() {
           >
             View Collection
           </button>
-
         </div>
-
       </div>
-
     </section>
   );
 }
