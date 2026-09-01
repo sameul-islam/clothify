@@ -34,7 +34,7 @@ export default function Hero() {
         {/* Buttons */}
         <div className="flex items-center gap-3 md:gap-4">
           <Link
-            to="/women"
+            to="/products?gender=women"
             className="
               px-7 md:px-9
               py-3
@@ -56,7 +56,7 @@ export default function Hero() {
           <div className="w-px h-5 bg-white/40" />
 
           <Link
-            to="/men"
+            to="/products?gender=men"
             className="
               px-7 md:px-9
               py-3

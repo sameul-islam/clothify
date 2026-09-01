@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Logo from "../../assets/logo (2).png"
 
 import { FiSearch, FiX, FiChevronRight, FiUser, FiHeart } from "react-icons/fi";
 
@@ -79,7 +80,7 @@ export default function MobileDrawer({ open, onClose, wishCount }) {
             border-black/10
           "
         >
-          <span
+          {/* <span
             className="
               font-Cormorant
               text-xl
@@ -90,7 +91,9 @@ export default function MobileDrawer({ open, onClose, wishCount }) {
           >
             SE
             <span className="italic font-normal">py</span>
-          </span>
+          </span> */}
+
+          <img src={Logo} alt="logo" className="max-h-10" />
 
           <button
             onClick={onClose}

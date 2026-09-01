@@ -51,7 +51,7 @@ export default function CollectionShowcase() {
           image={newArrivalImg}
           title="New Arrivals"
           subtitle="The latest pieces from our seasonal collection."
-          link="/products?collection=newArraivals"
+          link="/products?collection=newArrivals"
           large
         />
       </div>

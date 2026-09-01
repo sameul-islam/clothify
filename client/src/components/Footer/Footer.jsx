@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { FiInstagram, FiFacebook, FiTwitter, FiYoutube } from "react-icons/fi";
+import Logo from "../../assets/logo (1).png"
 
 export default function Footer() {
   return (
@@ -12,9 +13,11 @@ export default function Footer() {
 
           {/* Brand */}
           <div>
-            <h2 className="text-lg tracking-[0.35em] uppercase font-semibold font-Cormorant text-black">
+            {/* <h2 className="text-lg tracking-[0.35em] uppercase font-semibold font-Cormorant text-black">
               SEP<span className="italic">Y</span>
-            </h2>
+            </h2> */}
+
+            <img src={Logo} alt="logo" className="max-h-6 md:max-h-7" />
 
             <p className="mt-4 text-sm text-black/60 leading-relaxed">
               Modern luxury fashion designed for timeless elegance and everyday confidence.

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
+import { fetchProducts } from "../../services/productApi";
 
 export default function FeaturedProducts() {
   const [products, setProducts] = useState([]);
@@ -12,11 +12,10 @@ export default function FeaturedProducts() {
       try {
         setLoading(true);
 
-        const response = await fetch(
-          "http://localhost:5000/api/products?featured=true&limit=8",
-        );
-
-        const data = await response.json();
+        const data = await fetchProducts({
+          featured: true,
+          limit: 8,
+        });
 
         if (!data.success) {
           throw new Error("Failed to load products");
@@ -133,57 +132,58 @@ export default function FeaturedProducts() {
         >
           {products.map((product) => (
             <article
-              key={product._id}
+              key={product.slug}
               className="group relative overflow-hidden"
             >
-              {/* Product Image */}
-              <div className="relative overflow-hidden">
-                <img
-                  src={product?.images?.[0]}
-                  alt={product?.title}
-                  className="w-full aspect-3/4 object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-
-                {/* Second Image Hover */}
-                {product?.images?.[1] && (
+              <Link to={`/product/${product.slug}`}>
+                {/* Product Image */}
+                <div className="relative overflow-hidden">
                   <img
-                    src={product.images[1]}
-                    alt={product.title}
-                    className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                    src={product?.images?.[0]}
+                    alt={product?.title}
+                    className="w-full aspect-3/4 object-cover transition-transform duration-700 group-hover:scale-105"
                   />
-                )}
 
-                {/* Featured Badge */}
-                {product?.featured && (
-                  <span className="absolute top-4 left-4 bg-black text-white text-[10px] uppercase tracking-[0.15em] px-3 py-1">
-                    Featured
-                  </span>
-                )}
-              </div>
+                  {/* Second Image Hover */}
+                  {product?.images?.[1] && (
+                    <img
+                      src={product.images[1]}
+                      alt={product.title}
+                      className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                    />
+                  )}
 
-               {/* Product Info */}
-               <div className="pt-5 pb-2">
-                <p className="text-[11px] uppercase tracking-[0.15em] text-neutral-500 mb-2">
-                  {product?.category}
-                </p>
+                  {/* Featured Badge */}
+                  {product?.featured && (
+                    <span className="absolute top-4 left-4 bg-black text-white text-[10px] uppercase tracking-[0.15em] px-3 py-1">
+                      Featured
+                    </span>
+                  )}
+                </div>
 
-                <Link to={`/products/${product?._id}`} className="block text-[15px] text-neutral-900 font-medium mb-2 hover:text-neutral-600 transition-colors" >
-                  {product?.title}
-                </Link>
-
-                  <p className="text-[15px] font-light tracking-wide text-neutral-900">
-                     ${product?.price?.toLocaleString()}
+                {/* Product Info */}
+                <div className="pt-5 pb-2">
+                  <p className="text-[11px] uppercase tracking-[0.15em] text-neutral-500 mb-2">
+                    {product?.category}
                   </p>
 
-               </div>
+                  <p className="block text-[15px] text-neutral-900 font-medium mb-2 hover:text-neutral-600 transition-colors">
+                    {product?.title}
+                  </p>
 
+                  <p className="text-[15px] font-light tracking-wide text-neutral-900">
+                    ${product?.price?.toLocaleString()}
+                  </p>
+                </div>
+              </Link>
             </article>
           ))}
         </div>
 
         {/* View All */}
         <div className="flex justify-center mt-16 md:mt-20">
-          <button
+          <Link
+            to="/products?featured=true"
             className="
               border
               border-black
@@ -197,10 +197,11 @@ export default function FeaturedProducts() {
               duration-300
               hover:bg-black
               hover:text-white
+              cursor-pointer
             "
           >
             View Collection
-          </button>
+          </Link>
         </div>
       </div>
     </section>

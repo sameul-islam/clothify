@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Logo from '../../assets/logo (1).png'
 
 import {
   FiSearch,
@@ -176,12 +177,12 @@ export default function Navbar() {
 
           {/* LOGO */}
 
-          <Link
+          {/* <Link
             to="/"
             className="
               font-Cormorant
               text-[26px]
-              font-light
+              font-normal
               tracking-[0.25em]
               uppercase
               text-[--text-primary]
@@ -193,7 +194,12 @@ export default function Navbar() {
           >
           SE
             <span className="italic font-normal">PY</span>
+          </Link> */}
+
+          <Link to="/">
+          <img src={Logo} alt="logo" className=" max-h-6 md:max-h-7 cursor-pointer" />
           </Link>
+
 
           {/* RIGHT */}
 
