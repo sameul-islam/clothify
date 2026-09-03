@@ -28,7 +28,6 @@ const slugify = require("slugify");
 
 const createProduct = async (req, res) => {
   try {
-
     let slug = slugify(req.body.title, {
       lower: true,
       strict: true,
@@ -59,7 +58,6 @@ const createProduct = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
   try {
-
     // =================== Query Parameters ==================
 
     const {
@@ -119,36 +117,6 @@ const getAllProducts = async (req, res) => {
       };
     }
 
-    // +++++++ Base Query ++++++++
-
-    let query = Product.find(filter);
-
-    // *********** Sorting ***********
-
-    let sortOption = {
-      createdAt: -1,
-    };
-
-    switch (sort) {
-
-      case "price-low": 
-      sortOption = { price: 1 };
-      break;
-
-      case "price-high": 
-      sortOption = { price: -1 };
-      break;
-
-      case "rating": 
-      sortOption = { rating: -1 };
-      break;
-
-      default: 
-      sortOption = { createdAt: -1 };
-
-    }
-
-
     // ____________________ Price Range __________________
 
     if (minPrice || maxPrice) {
@@ -163,6 +131,32 @@ const getAllProducts = async (req, res) => {
       filter.price.$lte = Number(maxPrice);
     }
 
+    // +++++++ Base Query ++++++++
+
+    let query = Product.find(filter);
+
+    // *********** Sorting ***********
+
+    let sortOption = {
+      createdAt: -1,
+    };
+
+    switch (sort) {
+      case "price-low":
+        sortOption = { price: 1 };
+        break;
+
+      case "price-high":
+        sortOption = { price: -1 };
+        break;
+
+      case "rating":
+        sortOption = { rating: -1 };
+        break;
+
+      default:
+        sortOption = { createdAt: -1 };
+    }
 
     // -------------- Pagination ----------------
 
@@ -203,7 +197,6 @@ const getAllProducts = async (req, res) => {
     });
   }
 };
-
 
 const getSingleProduct = async (req, res) => {
   try {
