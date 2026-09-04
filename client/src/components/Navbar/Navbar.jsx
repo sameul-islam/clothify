@@ -1,5 +1,6 @@
 import { useState } from "react";
-import Logo from '../../assets/logo (1).png'
+import Logo from "../../assets/logo (1).png";
+import { useSelector } from "react-redux";
 
 import {
   FiSearch,
@@ -23,8 +24,11 @@ export default function Navbar() {
 
   const [activeSecondary, setActiveSecondary] = useState("All");
 
-  // Later connect with Redux
-  const cartCount = 2;
+  // cart logic
+  const cartItems = useSelector((state) => state.cart.items);
+
+  const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+
   const wishCount = 3;
 
   return (
@@ -177,29 +181,13 @@ export default function Navbar() {
 
           {/* LOGO */}
 
-          {/* <Link
-            to="/"
-            className="
-              font-Cormorant
-              text-[26px]
-              font-normal
-              tracking-[0.25em]
-              uppercase
-              text-[--text-primary]
-              shrink-0
-              select-none
-              max-sm:text-[22px]
-              max-sm:tracking-[0.2em]
-            "
-          >
-          SE
-            <span className="italic font-normal">PY</span>
-          </Link> */}
-
           <Link to="/">
-          <img src={Logo} alt="logo" className=" max-h-6 md:max-h-7 cursor-pointer" />
+            <img
+              src={Logo}
+              alt="logo"
+              className=" max-h-6 md:max-h-7 cursor-pointer"
+            />
           </Link>
-
 
           {/* RIGHT */}
 
@@ -263,31 +251,34 @@ export default function Navbar() {
 
             {/* Cart */}
 
-            <IconBtn label="Cart">
-              <FiShoppingBag size={18} />
+            <div className="relative">
+              <IconBtn>
+                <FiShoppingBag />
+              </IconBtn>
 
               {cartCount > 0 && (
                 <span
                   className="
-                    absolute
-                    top-0.5
-                    right-0.5
-                    w-4
-                    h-4
-                    bg-[--text-primary]
-                    text-[--bg]
-                    text-[9px]
-                    font-semibold
-                    rounded-full
-                    flex
-                    items-center
-                    justify-center
-                  "
+        absolute
+        -top-1
+        -right-1
+        min-w-4
+        h-4
+        px-1
+        rounded-full
+        bg-black
+        text-white
+        text-[9px]
+        flex
+        items-center
+        justify-center
+        leading-none
+      "
                 >
                   {cartCount}
                 </span>
               )}
-            </IconBtn>
+            </div>
 
             {/* Mobile Menu */}
 
