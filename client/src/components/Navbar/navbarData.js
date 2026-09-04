@@ -37,8 +37,6 @@ export const NAV_ITEMS = [
         links: [
           { label: "Bags & Clutches" },
           { label: "Scarves" },
-          { label: "Jewellery" },
-          { label: "Footwear" },
         ],
       },
     ],
@@ -79,7 +77,6 @@ export const NAV_ITEMS = [
         links: [
           { label: "Ties & Cufflinks" },
           { label: "Belts" },
-          { label: "Footwear" },
         ],
       },
     ],

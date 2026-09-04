@@ -1,10 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getProducts } from "./productThunks";
+import { getProducts, getSingleProduct } from "./productThunks";
 
 const initialState = {
   products: [],
   loading: false,
   error: null,
+
+  // single product
+  product: null,
+  productLoading: false,
+  productError: null,
 
   // pagination
   currentPage: 1,
@@ -61,6 +66,24 @@ const productSlice = createSlice({
       .addCase(getProducts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+
+      // single product
+      .addCase(getSingleProduct.pending, (state) => {
+        state.productLoading = true;
+        state.productError = null;
+        state.product = null;
+      })
+
+      .addCase(getSingleProduct.fulfilled, (state, action) => {
+        state.productLoading = false;
+        state.product = action.payload.product;
+      })
+
+      .addCase(getSingleProduct.rejected, (state, action) => {
+        state.productLoading = false;
+        state.productError = action.payload;
+        state.product = null;
       });
   },
 });

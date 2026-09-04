@@ -1,25 +1,25 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { getProducts } from "../features/products/productThunks";
 import ProductCard from "../features/products/ProductCard";
+import ProductFilters from "../features/products/ProductFilters";
+import ProductPagination from "../features/products/ProductPagination";
 
 export default function Products() {
   const dispatch = useDispatch();
 
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const {
-    products,
-    loading,
-    error,
-    totalProducts,
-  } = useSelector((state) => state.products);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+
+  const { products, loading, error, totalProducts, currentPage, totalPages } =
+    useSelector((state) => state.products);
 
   useEffect(() => {
     const params = {
-      page: 1,
+      page: searchParams.get("page") || 1,
       limit: 12,
     };
 
@@ -117,22 +117,55 @@ export default function Products() {
       "Discover our most carefully selected and distinctive pieces.";
   } else if (bestSeller) {
     pageTitle = "Best Sellers";
-    pageDescription =
-      "Explore the pieces most loved by the SEPY community.";
+    pageDescription = "Explore the pieces most loved by the SEPY community.";
   } else if (newArrival) {
     pageTitle = "New Arrivals";
-    pageDescription =
-      "Discover the latest additions to the SEPY collection.";
+    pageDescription = "Discover the latest additions to the SEPY collection.";
   }
+
+  const handleApplyFilters = (filters) => {
+    const params = new URLSearchParams(searchParams);
+
+    // Remove old filters
+    params.delete("gender");
+    params.delete("category");
+    params.delete("minPrice");
+    params.delete("maxPrice");
+    params.delete("sort");
+
+    // Add new filters
+    if (filters.gender) {
+      params.set("gender", filters.gender);
+    }
+
+    if (filters.category) {
+      params.set("category", filters.category);
+    }
+
+    if (filters.minPrice) {
+      params.set("minPrice", filters.minPrice);
+    }
+
+    if (filters.maxPrice) {
+      params.set("maxPrice", filters.maxPrice);
+    }
+
+    if (filters.sort) {
+      params.set("sort", filters.sort);
+    }
+
+    // Reset pagination
+    params.delete("page");
+
+    setSearchParams(params);
+  };
 
   return (
     <main className="min-h-screen bg-[#FAFAF7]">
-
       {/* Page Header */}
       <section className="pt-28 pb-12 md:pt-36 md:pb-16">
         <div className="max-w-400 mx-auto px-5 md:px-10">
           <div className="max-w-2xl">
-
             <p className="text-[11px] tracking-[0.28em] uppercase text-neutral-500 mb-4">
               The Collection
             </p>
@@ -144,7 +177,6 @@ export default function Products() {
             <p className="mt-5 max-w-xl text-sm md:text-base text-neutral-500 leading-relaxed">
               {pageDescription}
             </p>
-
           </div>
         </div>
       </section>
@@ -152,41 +184,34 @@ export default function Products() {
       {/* Filter / Sort Bar */}
       <section className="border-y border-black/10">
         <div className="max-w-400 mx-auto px-5 md:px-10">
-
           <div className="min-h-16 flex items-center justify-between">
-
             <div>
               <span className="text-[11px] tracking-[0.18em] uppercase text-neutral-500">
-                {loading
-                  ? "Loading Products"
-                  : `${totalProducts} Products`}
+                {loading ? "Loading Products" : `${totalProducts} Products`}
               </span>
             </div>
 
             <div>
               <button
                 type="button"
+                onClick={() => setFiltersOpen(true)}
                 className="text-[11px] tracking-[0.18em] uppercase text-neutral-900"
               >
                 Filter & Sort
               </button>
             </div>
-
           </div>
-
         </div>
       </section>
 
       {/* Product Content */}
       <section className="py-12 md:py-16">
         <div className="max-w-400 mx-auto px-5 md:px-10">
-
           {/* Loading */}
           {loading && (
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-8 md:gap-y-14">
               {[...Array(8)].map((_, index) => (
                 <div key={index}>
-
                   <div className="aspect-3/4 bg-neutral-100 animate-pulse" />
 
                   <div className="mt-5 h-3 w-1/3 bg-neutral-100 animate-pulse" />
@@ -194,7 +219,6 @@ export default function Products() {
                   <div className="mt-3 h-4 w-2/3 bg-neutral-100 animate-pulse" />
 
                   <div className="mt-3 h-4 w-1/4 bg-neutral-100 animate-pulse" />
-
                 </div>
               ))}
             </div>
@@ -203,46 +227,44 @@ export default function Products() {
           {/* Error */}
           {!loading && error && (
             <div className="py-20 text-center">
+              <p className="text-sm text-red-500">Failed to load products</p>
 
-              <p className="text-sm text-red-500">
-                Failed to load products
-              </p>
-
-              <p className="mt-2 text-xs text-neutral-500">
-                {error}
-              </p>
-
+              <p className="mt-2 text-xs text-neutral-500">{error}</p>
             </div>
           )}
 
           {/* Empty */}
           {!loading && !error && products.length === 0 && (
             <div className="py-20 text-center">
-
-              <p className="text-sm text-neutral-500">
-                No products found.
-              </p>
-
+              <p className="text-sm text-neutral-500">No products found.</p>
             </div>
           )}
 
           {/* Products */}
           {!loading && !error && products.length > 0 && (
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-8 md:gap-y-14">
-
               {products.map((product) => (
-                <ProductCard
-                  key={product.slug}
-                  product={product}
-                />
+                <ProductCard key={product.slug} product={product} />
               ))}
-
             </div>
           )}
 
+          {!loading && !error && products.length > 0 && (
+            <ProductPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+            />
+          )}
         </div>
       </section>
 
+      {filtersOpen && (
+        <ProductFilters
+          searchParams={searchParams}
+          onApply={handleApplyFilters}
+          onClose={() => setFiltersOpen(false)}
+        />
+      )}
     </main>
   );
 }

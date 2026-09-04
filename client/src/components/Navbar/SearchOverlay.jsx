@@ -1,5 +1,6 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FiSearch, FiX } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 import { TRENDING_TAGS } from "./navbarData";
 
 export default function SearchOverlay({
@@ -7,6 +8,9 @@ export default function SearchOverlay({
   onClose,
 }) {
   const inputRef = useRef(null);
+  const navigate = useNavigate();
+
+  const [search, setSearch] = useState("");
 
   // Auto Focus
   useEffect(() => {
@@ -37,6 +41,25 @@ export default function SearchOverlay({
       );
     };
   }, [onClose]);
+
+  // Perform Search
+  const handleSearch = (value = search) => {
+    const query = value.trim();
+
+    if (!query) return;
+
+    navigate(
+      `/products?search=${encodeURIComponent(query)}`
+    );
+
+    setSearch("");
+    onClose();
+  };
+
+  // Trending Search
+  const handleTrendingSearch = (tag) => {
+    handleSearch(tag);
+  };
 
   return (
     <div
@@ -100,6 +123,13 @@ export default function SearchOverlay({
             ref={inputRef}
             type="text"
             autoComplete="off"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSearch();
+              }
+            }}
             placeholder="Search..."
             className="
               flex-1
@@ -116,6 +146,7 @@ export default function SearchOverlay({
           />
 
           <button
+            type="button"
             onClick={onClose}
             className="
               flex
@@ -154,6 +185,8 @@ export default function SearchOverlay({
             {TRENDING_TAGS.map((tag) => (
               <button
                 key={tag}
+                type="button"
+                onClick={() => handleTrendingSearch(tag)}
                 className="
                   text-[12px]
                   px-3.5
