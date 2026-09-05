@@ -15,12 +15,16 @@ import MegaMenu from "./MegaMenu";
 import SearchOverlay from "./SearchOverlay";
 import MobileDrawer from "./MobileDrawer";
 
+import CartDrawer from "../../features/cart/CartDrawer";
+
 import { NAV_ITEMS, SECONDARY_LINKS, ANNOUNCEMENT_TEXT } from "./navbarData";
 import { Link } from "react-router-dom";
 
 export default function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const [cartOpen, setCartOpen] = useState(false);
 
   const [activeSecondary, setActiveSecondary] = useState("All");
 
@@ -251,10 +255,13 @@ export default function Navbar() {
 
             {/* Cart */}
 
-            <div className="relative">
-              <IconBtn>
-                <FiShoppingBag />
-              </IconBtn>
+            <button
+              type="button"
+              onClick={() => setCartOpen(true)}
+              aria-label="Open cart"
+              className="relative flex h-9 w-9 items-center justify-center rounded-full text-[--text-primary] transition-colors duration-200 hover:bg-black/5"
+            >
+              <FiShoppingBag />
 
               {cartCount > 0 && (
                 <span
@@ -278,7 +285,7 @@ export default function Navbar() {
                   {cartCount}
                 </span>
               )}
-            </div>
+            </button>
 
             {/* Mobile Menu */}
 
@@ -291,6 +298,8 @@ export default function Navbar() {
             </IconBtn>
           </div>
         </nav>
+
+        <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
 
         {/* Secondary Category Bar */}
 

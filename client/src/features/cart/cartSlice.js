@@ -1,7 +1,48 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
-  items: [],
+const getInitialCart = () => {
+  try {
+    const savedCart = localStorage.getItem("sepy-cart");
+
+    if (!savedCart) {
+      return {
+        items: [],
+      };
+    }
+
+    const parsedCart = JSON.parse(savedCart);
+
+    if (!Array.isArray(parsedCart?.items)) {
+      return {
+        items: [],
+      };
+    }
+
+    return {
+      items: parsedCart.items,
+    };
+  } catch (error) {
+    console.error("Failed to load cart:", error);
+
+    return {
+      items: [],
+    };
+  }
+};
+
+const initialState = getInitialCart();
+
+const saveCart = (items) => {
+  try {
+    localStorage.setItem(
+      "sepy-cart",
+      JSON.stringify({
+        items,
+      })
+    );
+  } catch (error) {
+    console.error("Failed to save cart:", error);
+  }
 };
 
 const cartSlice = createSlice({
@@ -24,12 +65,16 @@ const cartSlice = createSlice({
       } else {
         state.items.push(product);
       }
+
+      saveCart(state.items);
     },
 
     removeFromCart: (state, action) => {
       state.items = state.items.filter(
         (item) => item.cartItemId !== action.payload
       );
+
+      saveCart(state.items);
     },
 
     updateCartQuantity: (state, action) => {
@@ -39,13 +84,23 @@ const cartSlice = createSlice({
         (item) => item.cartItemId === cartItemId
       );
 
-      if (item) {
+      if (!item) return;
+
+      if (quantity <= 0) {
+        state.items = state.items.filter(
+          (item) => item.cartItemId !== cartItemId
+        );
+      } else {
         item.quantity = quantity;
       }
+
+      saveCart(state.items);
     },
 
     clearCart: (state) => {
       state.items = [];
+
+      saveCart(state.items);
     },
   },
 });
