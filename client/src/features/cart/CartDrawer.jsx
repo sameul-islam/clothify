@@ -1,17 +1,17 @@
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { removeFromCart, updateCartQuantity } from "./cartSlice";
 
 export default function CartDrawer({ open, onClose }) {
+  const dispatch = useDispatch();
+
   const cartItems = useSelector((state) => state.cart.items);
 
-  const cartCount = cartItems.reduce(
-    (total, item) => total + item.quantity,
-    0
-  );
+  const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   const subtotal = cartItems.reduce(
     (total, item) => total + item.price * item.quantity,
-    0
+    0,
   );
 
   return (
@@ -121,10 +121,7 @@ export default function CartDrawer({ open, onClose }) {
           ) : (
             <div className="py-6 space-y-6">
               {cartItems.map((item) => (
-                <article
-                  key={item.cartItemId}
-                  className="flex gap-4"
-                >
+                <article key={item.cartItemId} className="flex gap-4">
                   {/* Image */}
                   <Link
                     to={`/product/${item.slug}`}
@@ -189,12 +186,106 @@ export default function CartDrawer({ open, onClose }) {
                         </p>
                       )}
 
-                      <p className="text-[10px] tracking-[0.12em] uppercase text-neutral-400">
-                        Qty:{" "}
-                        <span className="text-neutral-700">
-                          {item.quantity}
-                        </span>
-                      </p>
+                      <div className="mt-4 flex items-center justify-between gap-3">
+                        <div>
+                          <p className="text-[9px] tracking-[0.16em] uppercase text-neutral-400 mb-2">
+                            Quantity
+                          </p>
+
+                          <div className="flex items-center w-fit border border-black/15">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                dispatch(
+                                  updateCartQuantity({
+                                    cartItemId: item.cartItemId,
+                                    quantity: item.quantity - 1,
+                                  }),
+                                )
+                              }
+                              disabled={item.quantity <= 1}
+                              aria-label={`Decrease quantity of ${item.title}`}
+                              className="
+          w-8
+          h-8
+          flex
+          items-center
+          justify-center
+          text-base
+          font-light
+          text-neutral-700
+          disabled:opacity-30
+          disabled:cursor-not-allowed
+          hover:bg-neutral-50
+          transition-colors
+        "
+                            >
+                              −
+                            </button>
+
+                            <span
+                              aria-live="polite"
+                              className="
+          w-9
+          h-8
+          flex
+          items-center
+          justify-center
+          text-[11px]
+          text-neutral-900
+          border-x
+          border-black/10
+        "
+                            >
+                              {item.quantity}
+                            </span>
+
+                            <button
+                              type="button"
+                              onClick={() =>
+                                dispatch(
+                                  updateCartQuantity({
+                                    cartItemId: item.cartItemId,
+                                    quantity: item.quantity + 1,
+                                  }),
+                                )
+                              }
+                              aria-label={`Increase quantity of ${item.title}`}
+                              className="
+          w-8
+          h-8
+          flex
+          items-center
+          justify-center
+          text-base
+          font-light
+          text-neutral-700
+          hover:bg-neutral-50
+          transition-colors
+        "
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() =>
+                            dispatch(removeFromCart(item.cartItemId))
+                          }
+                          className="
+      text-[9px]
+      tracking-[0.16em]
+      uppercase
+      text-neutral-400
+      hover:text-black
+      transition-colors
+    "
+                        >
+                          Remove
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </article>

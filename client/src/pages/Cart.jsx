@@ -308,6 +308,7 @@ export default function Cart() {
                 Shipping and taxes will be calculated at checkout.
               </p>
 
+            <Link to="/checkout">            
               <button
                 type="button"
                 className="
@@ -325,6 +326,7 @@ export default function Cart() {
               >
                 Checkout
               </button>
+            </Link>
 
               <Link
                 to="/products"
