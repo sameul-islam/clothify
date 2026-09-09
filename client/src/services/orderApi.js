@@ -5,3 +5,19 @@ export const createOrder = async (orderData) => {
 
   return res.data;
 };
+
+export const fetchSingleOrder = async (id) => {
+  const res = await api.get(`/orders/${id}`);
+
+  return res.data;
+};
+
+export const fetchOrdersByEmail = async (email) => {
+  const res = await api.get("/orders", {
+    params: {
+      email,
+    },
+  });
+
+  return res.data;
+};

@@ -1,13 +1,77 @@
+const mongoose = require("mongoose");
 const Order = require("../models/order.model");
 const Product = require("../models/product.model");
 
+
+const getOrdersByEmail = async (req, res) => {
+  try {
+    const { email } = req.query;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required",
+      });
+    }
+
+    const orders = await Order.find({
+      "customer.email": email.toLowerCase().trim(),
+    }).sort({
+      createdAt: -1,
+    });
+
+    return res.status(200).json({
+      success: true,
+      count: orders.length,
+      orders,
+    });
+  } catch (error) {
+    console.error("Get orders failed:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch orders",
+    });
+  }
+};
+
+const getSingleOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid order ID",
+      });
+    }
+
+    const order = await Order.findById(id);
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      order,
+    });
+  } catch (error) {
+    console.error("Get order failed:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch order",
+    });
+  }
+};
+
 const createOrder = async (req, res) => {
   try {
-    const {
-      customer,
-      items,
-      paymentMethod = "cod",
-    } = req.body;
+    const { customer, items, paymentMethod = "cod" } = req.body;
 
     // -----------------------------
     // Basic validation
@@ -31,12 +95,7 @@ const createOrder = async (req, res) => {
     // Validate payment method
     // -----------------------------
 
-    const allowedPaymentMethods = [
-      "cod",
-      "card",
-      "bkash",
-      "nagad",
-    ];
+    const allowedPaymentMethods = ["cod", "card", "bkash", "nagad"];
 
     if (!allowedPaymentMethods.includes(paymentMethod)) {
       return res.status(400).json({
@@ -148,31 +207,69 @@ const createOrder = async (req, res) => {
     // Create order
     // -----------------------------
 
-    const order = await Order.create({
-      customer: {
-        name: customer.name,
-        email: customer.email,
-        phone: customer.phone,
-        address: customer.address,
-        city: customer.city,
-        postalCode: customer.postalCode,
-        country: customer.country || "Bangladesh",
-      },
+    const session = await mongoose.startSession();
 
-      items: orderItems,
+    try {
+      session.startTransaction();
 
-      pricing: {
-        subtotal,
-        shipping,
-        tax,
-        total,
-      },
+      for (const item of items) {
+        const updatedProduct = await Product.findOneAndUpdate(
+          {
+            _id: item.productId,
+            stock: { $gte: item.quantity },
+          },
+          {
+            $inc: {
+              stock: -item.quantity,
+            },
+          },
+          {
+            new: true,
+            session,
+          },
+        );
 
-      paymentMethod,
+        if (!updatedProduct) {
+          throw new Error(`Insufficient stock for product: ${item.productId}`);
+        }
+      }
 
-      status: "pending",
-      paymentStatus: "pending",
-    });
+      const order = await Order.create(
+        [
+          {
+            customer,
+            items: orderItems,
+            pricing: {
+              subtotal,
+              shipping,
+              tax,
+              total,
+            },
+            paymentMethod,
+          },
+        ],
+        {
+          session,
+        },
+      );
+
+      await session.commitTransaction();
+
+      return res.status(201).json({
+        success: true,
+        message: "Order created successfully",
+        order: order[0],
+      });
+    } catch (error) {
+      await session.abortTransaction();
+
+      return res.status(400).json({
+        success: false,
+        message: error.message || "Failed to create order",
+      });
+    } finally {
+      await session.endSession();
+    }
 
     // -----------------------------
     // Response
@@ -195,4 +292,6 @@ const createOrder = async (req, res) => {
 
 module.exports = {
   createOrder,
+  getSingleOrder,
+  getOrdersByEmail,
 };

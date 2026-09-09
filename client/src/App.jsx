@@ -8,6 +8,7 @@ import Footer from './components/Footer/Footer'
 import Cart from './pages/Cart'
 import Checkout from './pages/Checkout'
 import OrderConfirmation from './pages/OrderConfirmation'
+import MyOrders from './pages/MyOrders'
 
 const App = () => {
   return (
@@ -21,7 +22,8 @@ const App = () => {
           <Route path='/product/:slug' element={<ProductDetailsPage/>} />
           <Route path='/cart' element={ <Cart/> } />
           <Route path='/checkout' element={<Checkout/>} />
-          <Route path='order-confirmation' element={<OrderConfirmation/>} />
+          <Route path='order-confirmation/:id' element={<OrderConfirmation/>} />
+          <Route path='/my-orders' element={<MyOrders/>} />
         </Routes>
 
       </div>

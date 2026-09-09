@@ -221,9 +221,9 @@ export default function Navbar() {
 
             {/* Account */}
 
-            <IconBtn label="Account" className="max-lg:hidden">
+            <Link to="/my-orders" aria-label="My Orders" className="flex items-center justify-center">
               <FiUser size={18} />
-            </IconBtn>
+            </Link>
 
             {/* Wishlist */}
 

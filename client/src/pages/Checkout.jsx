@@ -136,11 +136,7 @@ export default function Checkout() {
       if (data.success) {
         dispatch(clearCart());
 
-        navigate("/order-confirmation", {
-          state: {
-            order: data.order,
-          },
-        });
+        navigate(`/order-confirmation/${data.order._id}`);
       }
     } catch (error) {
       const message =
@@ -203,8 +199,6 @@ export default function Checkout() {
   return (
     <main className="min-h-screen bg-[#FAFAF7] pt-28 pb-20 md:pt-36">
       <div className="max-w-7xl mx-auto px-5 md:px-10">
-
-{/* এই অর্ডার এরর আসলে কোন জায়গায় বসাতে হবে সেটা এ আই থেকে জানতে হবে। */}
 
         {orderError && (
           <div className="mb-6 border border-red-200 bg-red-50 px-4 py-4">
