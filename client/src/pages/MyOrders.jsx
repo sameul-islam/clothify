@@ -1,52 +1,85 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { fetchOrdersByEmail } from "../services/orderApi";
+import { useSelector } from "react-redux";
+
+import { fetchMyOrders } from "../services/orderApi";
 import OrderStatus from "../components/OrderStatus";
 
 const MyOrders = () => {
-  const [email, setEmail] = useState("");
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
+
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    if (!email.trim()) {
-      setError("Please enter your email address.");
+  useEffect(() => {
+    if (!isAuthenticated) {
       return;
     }
 
-    try {
-      setLoading(true);
-      setError("");
+    const loadOrders = async () => {
+      try {
+        setLoading(true);
+        setError("");
 
-      const data = await fetchOrdersByEmail(email);
+        const data = await fetchMyOrders();
 
-      if (!data.success) {
-        throw new Error(data.message || "Failed to fetch orders.");
+        if (!data.success) {
+          throw new Error(data.message || "Failed to fetch orders.");
+        }
+
+        setOrders(data.orders);
+      } catch (error) {
+        console.error("Orders fetch failed:", error);
+
+        setError(
+          error.response?.data?.message ||
+            error.message ||
+            "Unable to load your orders.",
+        );
+
+        setOrders([]);
+      } finally {
+        setLoading(false);
       }
+    };
 
-      setOrders(data.orders);
-    } catch (error) {
-      console.error("Orders fetch failed:", error);
+    loadOrders();
+  }, [isAuthenticated]);
 
-      setError(
-        error.response?.data?.message ||
-          error.message ||
-          "Unable to load your orders.",
-      );
+  if (!isAuthenticated) {
+    return (
+      <main className="min-h-screen bg-white">
+        <div className="mx-auto flex min-h-[70vh] max-w-xl flex-col items-center justify-center px-5 text-center">
+          <p className="text-xs uppercase tracking-[0.2em] text-gray-500">
+            Account
+          </p>
 
-      setOrders([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+          <h1 className="mt-3 text-3xl font-medium tracking-tight text-black">
+            Sign in to view your orders
+          </h1>
+
+          <p className="mt-3 text-sm leading-6 text-gray-500">
+            Your order history is available after signing in to your SEPY
+            account.
+          </p>
+
+          <Link
+            to="/login"
+            className="mt-7 bg-black px-6 py-3 text-sm font-medium text-white transition hover:bg-gray-800"
+          >
+            Sign In
+          </Link>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-white">
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
         {/* Header */}
+
         <div className="mb-10 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-gray-500">
@@ -58,8 +91,8 @@ const MyOrders = () => {
             </h1>
 
             <p className="mt-3 max-w-xl text-sm leading-6 text-gray-500">
-              Enter the email address used when placing your order to view your
-              order history.
+              Welcome back{user?.name ? `, ${user.name}` : ""}. Here you can
+              view your order history.
             </p>
           </div>
 
@@ -71,75 +104,53 @@ const MyOrders = () => {
           </Link>
         </div>
 
-        {/* Email Form */}
-        <form onSubmit={handleSubmit} className="mb-10 max-w-xl">
-          <label
-            htmlFor="order-email"
-            className="mb-2 block text-sm font-medium text-gray-900"
-          >
-            Email address
-          </label>
+        {/* Loading */}
 
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <input
-              id="order-email"
-              type="email"
-              value={email}
-              onChange={(event) => {
-                setEmail(event.target.value);
-                setError("");
-              }}
-              placeholder="Enter your email"
-              className="min-w-0 flex-1 border border-gray-300 px-4 py-3 text-sm outline-none transition focus:border-black"
-            />
-
-            <button
-              type="submit"
-              disabled={loading}
-              className={`px-6 py-3 text-sm font-medium text-white transition ${
-                loading
-                  ? "cursor-not-allowed bg-gray-400"
-                  : "bg-black hover:bg-gray-800"
-              }`}
-            >
-              {loading ? "Loading..." : "View Orders"}
-            </button>
+        {loading && (
+          <div className="py-16 text-center">
+            <p className="text-sm text-gray-500">Loading your orders...</p>
           </div>
-        </form>
+        )}
 
         {/* Error */}
-        {error && (
-          <div className="mb-8 max-w-xl border border-red-200 bg-red-50 px-4 py-4">
+
+        {!loading && error && (
+          <div className="mb-8 border border-red-200 bg-red-50 px-4 py-4">
             <p className="text-sm text-red-600">{error}</p>
           </div>
         )}
 
         {/* Empty State */}
-        {!loading && !error && email && orders.length === 0 && (
+
+        {!loading && !error && orders.length === 0 && (
           <div className="border border-gray-200 px-6 py-12 text-center">
-            <h2 className="text-lg font-medium text-black">No orders found</h2>
+            <h2 className="text-lg font-medium text-black">No orders yet</h2>
 
             <p className="mt-2 text-sm text-gray-500">
-              We could not find any orders associated with this email address.
+              You haven't placed any orders yet.
             </p>
 
             <Link
               to="/products"
               className="mt-6 inline-block bg-black px-6 py-3 text-sm font-medium text-white transition hover:bg-gray-800"
             >
-              Continue Shopping
+              Start Shopping
             </Link>
           </div>
         )}
 
         {/* Orders */}
-        {orders.length > 0 && (
+
+        {!loading && !error && orders.length > 0 && (
           <div>
             <div className="mb-5 flex items-center justify-between">
-              <h2 className="text-lg font-medium text-black">Order History</h2>
+              <h2 className="text-lg font-medium text-black">
+                Order History
+              </h2>
 
               <p className="text-sm text-gray-500">
-                {orders.length} {orders.length === 1 ? "order" : "orders"}
+                {orders.length}{" "}
+                {orders.length === 1 ? "order" : "orders"}
               </p>
             </div>
 
@@ -150,6 +161,7 @@ const MyOrders = () => {
                   className="border border-gray-200 p-5 sm:p-6"
                 >
                   {/* Order Header */}
+
                   <div className="flex flex-col gap-4 border-b border-gray-100 pb-5 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <p className="text-xs uppercase tracking-wider text-gray-500">
@@ -173,6 +185,7 @@ const MyOrders = () => {
                   </div>
 
                   {/* Order Details */}
+
                   <div className="grid grid-cols-2 gap-4 py-5 sm:grid-cols-4">
                     <div>
                       <p className="text-xs text-gray-500">Status</p>
@@ -208,6 +221,7 @@ const MyOrders = () => {
                   </div>
 
                   {/* Items Preview */}
+
                   <div className="border-t border-gray-100 pt-5">
                     <div className="space-y-4">
                       {order.items.slice(0, 3).map((item, index) => (
@@ -259,6 +273,7 @@ const MyOrders = () => {
                   </div>
 
                   {/* Footer */}
+
                   <div className="mt-5 flex justify-end border-t border-gray-100 pt-5">
                     <Link
                       to={`/order-confirmation/${order._id}`}

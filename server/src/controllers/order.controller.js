@@ -35,9 +35,51 @@ const getOrdersByEmail = async (req, res) => {
   }
 };
 
+
+const getMyOrders = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required",
+      });
+    }
+
+    const orders = await Order.find({
+      user: userId,
+    }).sort({
+      createdAt: -1,
+    });
+
+    return res.status(200).json({
+      success: true,
+      count: orders.length,
+      orders,
+    });
+  } catch (error) {
+    console.error("Get my orders failed:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch your orders",
+    });
+  }
+};
+
+
 const getSingleOrder = async (req, res) => {
   try {
+    const userId = req.user.userId;
     const { id } = req.params;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required",
+      });
+    }
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
@@ -46,7 +88,10 @@ const getSingleOrder = async (req, res) => {
       });
     }
 
-    const order = await Order.findById(id);
+    const order = await Order.findOne({
+      _id: id,
+      user: userId,
+    });
 
     if (!order) {
       return res.status(404).json({
@@ -60,7 +105,7 @@ const getSingleOrder = async (req, res) => {
       order,
     });
   } catch (error) {
-    console.error("Get order failed:", error);
+    console.error("Get single order failed:", error);
 
     return res.status(500).json({
       success: false,
@@ -72,6 +117,14 @@ const getSingleOrder = async (req, res) => {
 const createOrder = async (req, res) => {
   try {
     const { customer, items, paymentMethod = "cod" } = req.body;
+    const userId = req.user.userId;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required",
+      });
+    }
 
     // -----------------------------
     // Basic validation
@@ -237,6 +290,7 @@ const createOrder = async (req, res) => {
       const order = await Order.create(
         [
           {
+            user: userId,
             customer,
             items: orderItems,
             pricing: {
@@ -294,4 +348,5 @@ module.exports = {
   createOrder,
   getSingleOrder,
   getOrdersByEmail,
+  getMyOrders,
 };

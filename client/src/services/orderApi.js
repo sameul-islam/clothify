@@ -21,3 +21,8 @@ export const fetchOrdersByEmail = async (email) => {
 
   return res.data;
 };
+
+export const fetchMyOrders = async () => {
+  const res = await api.get("/orders/my");
+  return res.data;
+};

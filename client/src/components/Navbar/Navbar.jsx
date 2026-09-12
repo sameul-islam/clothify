@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Logo from "../../assets/logo (1).png";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 import {
   FiSearch,
@@ -17,10 +17,14 @@ import MobileDrawer from "./MobileDrawer";
 
 import CartDrawer from "../../features/cart/CartDrawer";
 
+import { logout } from "../../features/auth/authSlice";
+
 import { NAV_ITEMS, SECONDARY_LINKS, ANNOUNCEMENT_TEXT } from "./navbarData";
 import { Link } from "react-router-dom";
 
 export default function Navbar() {
+  const dispatch = useDispatch();
+
   const [searchOpen, setSearchOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -31,9 +35,16 @@ export default function Navbar() {
   // cart logic
   const cartItems = useSelector((state) => state.cart.items);
 
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
+
   const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   const wishCount = 3;
+
+  const handleLogout = () => {
+    localStorage.removeItem("sepy-token");
+    dispatch(logout());
+  };
 
   return (
     <>
@@ -221,7 +232,11 @@ export default function Navbar() {
 
             {/* Account */}
 
-            <Link to="/my-orders" aria-label="My Orders" className="flex items-center justify-center">
+            <Link
+              to={isAuthenticated ? "/my-orders" : "/login"}
+              aria-label={isAuthenticated ? "My Orders" : "Login"}
+              className="flex items-center justify-center"
+            >
               <FiUser size={18} />
             </Link>
 

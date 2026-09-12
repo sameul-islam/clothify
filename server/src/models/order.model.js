@@ -47,11 +47,17 @@ const orderItemSchema = new mongoose.Schema(
   },
   {
     _id: false,
-  }
+  },
 );
 
 const orderSchema = new mongoose.Schema(
   {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+
     customer: {
       name: {
         type: String,
@@ -147,29 +153,19 @@ const orderSchema = new mongoose.Schema(
 
     paymentStatus: {
       type: String,
-      enum: [
-        "pending",
-        "paid",
-        "failed",
-        "refunded",
-      ],
+      enum: ["pending", "paid", "failed", "refunded"],
       default: "pending",
     },
 
     paymentMethod: {
       type: String,
-      enum: [
-        "cod",
-        "card",
-        "bkash",
-        "nagad",
-      ],
+      enum: ["cod", "card", "bkash", "nagad"],
       default: "cod",
     },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const Order = mongoose.model("Order", orderSchema);
