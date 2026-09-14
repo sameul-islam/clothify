@@ -2,40 +2,6 @@ const mongoose = require("mongoose");
 const Order = require("../models/order.model");
 const Product = require("../models/product.model");
 
-
-const getOrdersByEmail = async (req, res) => {
-  try {
-    const { email } = req.query;
-
-    if (!email) {
-      return res.status(400).json({
-        success: false,
-        message: "Email is required",
-      });
-    }
-
-    const orders = await Order.find({
-      "customer.email": email.toLowerCase().trim(),
-    }).sort({
-      createdAt: -1,
-    });
-
-    return res.status(200).json({
-      success: true,
-      count: orders.length,
-      orders,
-    });
-  } catch (error) {
-    console.error("Get orders failed:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Failed to fetch orders",
-    });
-  }
-};
-
-
 const getMyOrders = async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -67,7 +33,6 @@ const getMyOrders = async (req, res) => {
     });
   }
 };
-
 
 const getSingleOrder = async (req, res) => {
   try {
@@ -200,30 +165,41 @@ const createOrder = async (req, res) => {
         });
       }
 
+
       // -----------------------------
       // Variant validation
       // -----------------------------
 
-      if (
-        item.selectedSize &&
-        product.sizes.length > 0 &&
-        !product.sizes.includes(item.selectedSize)
-      ) {
-        return res.status(400).json({
-          success: false,
-          message: `Invalid size for ${product.title}`,
-        });
+      if (product.sizes.length > 0) {
+        if (!item.selectedSize) {
+          return res.status(400).json({
+            success: false,
+            message: `Size is required for ${product.title}`,
+          });
+        }
+
+        if (!product.sizes.includes(item.selectedSize)) {
+          return res.status(400).json({
+            success: false,
+            message: `Invalid size for ${product.title}`,
+          });
+        }
       }
 
-      if (
-        item.selectedColor &&
-        product.colors.length > 0 &&
-        !product.colors.includes(item.selectedColor)
-      ) {
-        return res.status(400).json({
-          success: false,
-          message: `Invalid color for ${product.title}`,
-        });
+      if (product.colors.length > 0) {
+        if (!item.selectedColor) {
+          return res.status(400).json({
+            success: false,
+            message: `Color is required for ${product.title}`,
+          });
+        }
+
+        if (!product.colors.includes(item.selectedColor)) {
+          return res.status(400).json({
+            success: false,
+            message: `Invalid color for ${product.title}`,
+          });
+        }
       }
 
       // -----------------------------
@@ -325,15 +301,6 @@ const createOrder = async (req, res) => {
       await session.endSession();
     }
 
-    // -----------------------------
-    // Response
-    // -----------------------------
-
-    res.status(201).json({
-      success: true,
-      message: "Order created successfully",
-      order,
-    });
   } catch (error) {
     console.error("Create order error:", error);
 
@@ -347,6 +314,5 @@ const createOrder = async (req, res) => {
 module.exports = {
   createOrder,
   getSingleOrder,
-  getOrdersByEmail,
   getMyOrders,
 };

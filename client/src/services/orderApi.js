@@ -12,15 +12,6 @@ export const fetchSingleOrder = async (id) => {
   return res.data;
 };
 
-export const fetchOrdersByEmail = async (email) => {
-  const res = await api.get("/orders", {
-    params: {
-      email,
-    },
-  });
-
-  return res.data;
-};
 
 export const fetchMyOrders = async () => {
   const res = await api.get("/orders/my");

@@ -1,12 +1,11 @@
 const express = require("express");
 
-const { createOrder, getSingleOrder, getOrdersByEmail, getMyOrders } = require("../controllers/order.controller");
+const { createOrder, getSingleOrder, getMyOrders } = require("../controllers/order.controller");
 const protect = require("../middleware/auth.middleware");
 
 const router = express.Router();
 
 router.post("/", protect, createOrder);
-router.get("/", getOrdersByEmail);
 router.get("/my", protect, getMyOrders);
 router.get("/:id", protect, getSingleOrder);
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { fetchSingleOrder } from "../services/orderApi";
+import OrderStatus from "../components/OrderStatus";
 
 const OrderConfirmation = () => {
   const { id } = useParams();
@@ -95,7 +96,9 @@ const OrderConfirmation = () => {
           <div className="mt-5 space-y-1">
             <p className="text-sm text-gray-500">
               Order ID:{" "}
-              <span className="font-medium text-gray-900">{order._id}</span>
+              <span className="font-medium text-gray-900">
+                #{order._id.slice(-8)}
+              </span>
             </p>
 
             <p className="text-sm text-gray-500">
@@ -117,8 +120,8 @@ const OrderConfirmation = () => {
               Order Status
             </p>
 
-            <p className="mt-2 text-sm font-medium capitalize text-gray-900">
-              {order.status}
+            <p className="mt-2">
+              <OrderStatus status={order.status} />
             </p>
           </div>
 
@@ -146,7 +149,24 @@ const OrderConfirmation = () => {
                 className="flex gap-4 px-6 py-5"
               >
                 <div className="h-24 w-20 shrink-0 overflow-hidden bg-gray-100">
-                  {item.image ? (
+                  {item.slug ? (
+                    <Link
+                      to={`/product/${item.slug}`}
+                      className="block h-full w-full"
+                    >
+                      {item.image ? (
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          className="h-full w-full object-cover transition duration-300 hover:scale-105"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center text-xs text-gray-400">
+                          No Image
+                        </div>
+                      )}
+                    </Link>
+                  ) : item.image ? (
                     <img
                       src={item.image}
                       alt={item.title}
@@ -160,9 +180,18 @@ const OrderConfirmation = () => {
                 </div>
 
                 <div className="flex-1">
-                  <h3 className="text-sm font-medium text-gray-900">
-                    {item.title}
-                  </h3>
+                  {item.slug ? (
+                    <Link
+                      to={`/product/${item.slug}`}
+                      className="text-sm font-medium text-gray-900 transition hover:underline"
+                    >
+                      {item.title}
+                    </Link>
+                  ) : (
+                    <h3 className="text-sm font-medium text-gray-900">
+                      {item.title}
+                    </h3>
+                  )}
 
                   {item.selectedSize && (
                     <p className="mt-1 text-sm text-gray-500">
@@ -256,10 +285,17 @@ const OrderConfirmation = () => {
         </div>
 
         {/* Actions */}
-        <div className="mt-10 flex justify-center">
+        <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
+          <Link
+            to="/my-orders"
+            className="border border-gray-300 px-8 py-3 text-center text-sm font-medium text-gray-900 transition hover:bg-gray-50"
+          >
+            View My Orders
+          </Link>
+
           <Link
             to="/products"
-            className="bg-black px-8 py-3 text-sm font-medium text-white transition hover:bg-gray-800"
+            className="bg-black px-8 py-3 text-center text-sm font-medium text-white transition hover:bg-gray-800"
           >
             Continue Shopping
           </Link>

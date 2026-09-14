@@ -25,15 +25,23 @@ export default function Checkout() {
 
   const navigate = useNavigate();
 
-  const { isAuthenticated } = useSelector(
-    (state) => state.auth
+  const { isAuthenticated, authInitialized } = useSelector(
+    (state) => state.auth,
   );
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      navigate("/login");
+    if (!authInitialized) {
+      return;
     }
-  }, [isAuthenticated, navigate]);
+
+    if (!isAuthenticated) {
+      navigate("/login", {
+        state: {
+          from: "/checkout",
+        },
+      });
+    }
+  }, [authInitialized, isAuthenticated, navigate]);
 
   const dispatch = useDispatch();
 
@@ -209,7 +217,6 @@ export default function Checkout() {
   return (
     <main className="min-h-screen bg-[#FAFAF7] pt-28 pb-20 md:pt-36">
       <div className="max-w-7xl mx-auto px-5 md:px-10">
-
         {orderError && (
           <div className="mb-6 border border-red-200 bg-red-50 px-4 py-4">
             <p className="text-sm font-medium text-red-700">

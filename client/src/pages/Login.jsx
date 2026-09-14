@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { login } from "../features/auth/authThunks";
@@ -7,6 +7,7 @@ import { setCredentials } from "../features/auth/authSlice";
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
 
   const { loading, error } = useSelector((state) => state.auth);
@@ -42,7 +43,9 @@ const Login = () => {
         })
       );
 
-      navigate("/");
+      const redirectTo = location.state?.from || "/";
+
+      navigate(redirectTo, { replace: true });
     }
   };
 

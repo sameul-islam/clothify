@@ -334,8 +334,10 @@ export default function CartDrawer({ open, onClose }) {
                 View Bag
               </Link>
 
-              <button
+              <Link
+                to="/checkout"
                 type="button"
+                onClick={onClose}
                 className="
                   h-12
                   flex
@@ -351,7 +353,7 @@ export default function CartDrawer({ open, onClose }) {
                 "
               >
                 Checkout
-              </button>
+              </Link>
             </div>
           </div>
         )}

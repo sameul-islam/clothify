@@ -27,9 +27,8 @@ export default function Navbar() {
 
   const [searchOpen, setSearchOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
-
   const [cartOpen, setCartOpen] = useState(false);
-
+  const [accountOpen, setAccountOpen] = useState(false);
   const [activeSecondary, setActiveSecondary] = useState("All");
 
   // cart logic
@@ -232,13 +231,49 @@ export default function Navbar() {
 
             {/* Account */}
 
-            <Link
-              to={isAuthenticated ? "/my-orders" : "/login"}
-              aria-label={isAuthenticated ? "My Orders" : "Login"}
-              className="flex items-center justify-center"
-            >
-              <FiUser size={18} />
-            </Link>
+            {isAuthenticated ? (
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setAccountOpen((prev) => !prev)}
+                  aria-label="Account"
+                  className="flex h-9 w-9 items-center justify-center rounded-full text-[--text-primary] transition-colors duration-200 hover:bg-black/5"
+                >
+                  <FiUser size={18} />
+                </button>
+
+                {accountOpen && (
+                  <div className="absolute right-0 top-11 z-50 w-44 border border-black/10 bg-white py-2 shadow-lg">
+                    <Link
+                      to="/my-orders"
+                      onClick={() => setAccountOpen(false)}
+                      className="block px-4 py-2.5 text-sm text-black transition-colors hover:bg-black/5"
+                    >
+                      My Orders
+                    </Link>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleLogout();
+                        setAccountOpen(false);
+                      }}
+                      className="block w-full px-4 py-2.5 text-left text-sm text-black transition-colors hover:bg-black/5"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link
+                to="/login"
+                aria-label="Login"
+                className="flex h-9 w-9 items-center justify-center rounded-full text-[--text-primary] transition-colors duration-200 hover:bg-black/5"
+              >
+                <FiUser size={18} />
+              </Link>
+            )}
 
             {/* Wishlist */}
 

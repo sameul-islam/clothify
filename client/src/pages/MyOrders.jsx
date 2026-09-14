@@ -6,14 +6,16 @@ import { fetchMyOrders } from "../services/orderApi";
 import OrderStatus from "../components/OrderStatus";
 
 const MyOrders = () => {
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const { isAuthenticated, authInitialized, user } = useSelector(
+    (state) => state.auth,
+  );
 
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!authInitialized || !isAuthenticated) {
       return;
     }
 
@@ -45,7 +47,7 @@ const MyOrders = () => {
     };
 
     loadOrders();
-  }, [isAuthenticated]);
+  }, [authInitialized, isAuthenticated]);
 
   if (!isAuthenticated) {
     return (
@@ -144,13 +146,10 @@ const MyOrders = () => {
         {!loading && !error && orders.length > 0 && (
           <div>
             <div className="mb-5 flex items-center justify-between">
-              <h2 className="text-lg font-medium text-black">
-                Order History
-              </h2>
+              <h2 className="text-lg font-medium text-black">Order History</h2>
 
               <p className="text-sm text-gray-500">
-                {orders.length}{" "}
-                {orders.length === 1 ? "order" : "orders"}
+                {orders.length} {orders.length === 1 ? "order" : "orders"}
               </p>
             </div>
 
@@ -169,7 +168,7 @@ const MyOrders = () => {
                       </p>
 
                       <p className="mt-1 break-all text-sm font-medium text-black">
-                        #{order._id}
+                        #{order._id.slice(-8)}
                       </p>
                     </div>
 
@@ -244,9 +243,18 @@ const MyOrders = () => {
                           </div>
 
                           <div className="min-w-0 flex-1">
-                            <p className="truncate text-sm font-medium text-black">
-                              {item.title}
-                            </p>
+                            {item.slug ? (
+                              <Link
+                                to={`/product/${item.slug}`}
+                                className="truncate text-sm font-medium text-black transition hover:underline"
+                              >
+                                {item.title}
+                              </Link>
+                            ) : (
+                              <p className="truncate text-sm font-medium text-black">
+                                {item.title}
+                              </p>
+                            )}
 
                             <p className="mt-1 text-xs text-gray-500">
                               Qty: {item.quantity}
