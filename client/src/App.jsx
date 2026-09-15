@@ -17,6 +17,7 @@ import OrderConfirmation from "./pages/OrderConfirmation";
 import MyOrders from "./pages/MyOrders";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Addresses from "./pages/Addresses";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -55,6 +56,7 @@ const App = () => {
             element={<OrderConfirmation />}
           />
           <Route path="/my-orders" element={<MyOrders />} />
+          <Route path="/addresses" element={<Addresses/>} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Routes>
