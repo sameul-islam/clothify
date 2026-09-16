@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const Order = require("../models/order.model");
 const Product = require("../models/product.model");
 
+const { calculateShipping } = require("../utils/shipping");
+
 const getMyOrders = async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -75,6 +77,34 @@ const getSingleOrder = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Failed to fetch order",
+    });
+  }
+};
+
+const getShippingQuote = async (req, res) => {
+  try {
+    const { city } = req.body;
+
+    if (!city || !city.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "City is required",
+      });
+    }
+
+    const shipping = calculateShipping(city);
+
+    return res.status(200).json({
+      success: true,
+      shipping,
+      city: city.trim(),
+    });
+  } catch (error) {
+    console.error("Get shipping quote failed:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to calculate shipping",
     });
   }
 };
@@ -165,7 +195,6 @@ const createOrder = async (req, res) => {
         });
       }
 
-
       // -----------------------------
       // Variant validation
       // -----------------------------
@@ -227,7 +256,7 @@ const createOrder = async (req, res) => {
     // Pricing
     // -----------------------------
 
-    const shipping = 0;
+    const shipping = calculateShipping(customer.city);
     const tax = 0;
 
     const total = subtotal + shipping + tax;
@@ -300,7 +329,6 @@ const createOrder = async (req, res) => {
     } finally {
       await session.endSession();
     }
-
   } catch (error) {
     console.error("Create order error:", error);
 
@@ -315,4 +343,5 @@ module.exports = {
   createOrder,
   getSingleOrder,
   getMyOrders,
+  getShippingQuote,
 };

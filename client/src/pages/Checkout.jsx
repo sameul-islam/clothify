@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { clearCart } from "../features/cart/cartSlice";
-
+import { getAddresses } from "../features/addresses/addressThunks";
 import { createOrder } from "../services/orderApi";
 
 export default function Checkout() {
@@ -24,10 +24,13 @@ export default function Checkout() {
   const [orderError, setOrderError] = useState("");
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const { isAuthenticated, authInitialized } = useSelector(
     (state) => state.auth,
   );
+
+  const { items: savedAddresses } = useSelector((state) => state.addresses);
 
   useEffect(() => {
     if (!authInitialized) {
@@ -43,7 +46,35 @@ export default function Checkout() {
     }
   }, [authInitialized, isAuthenticated, navigate]);
 
-  const dispatch = useDispatch();
+  useEffect(() => {
+    if (!authInitialized || !isAuthenticated) {
+      return;
+    }
+
+    dispatch(getAddresses());
+  }, [authInitialized, isAuthenticated, dispatch]);
+
+  useEffect(() => {
+    if (savedAddresses.length === 0) {
+      return;
+    }
+
+    const defaultAddress = savedAddresses.find((address) => address.isDefault);
+
+    if (!defaultAddress) {
+      return;
+    }
+
+    setFormData((current) => ({
+      ...current,
+      name: defaultAddress.recipientName,
+      phone: defaultAddress.phone,
+      address: defaultAddress.addressLine1,
+      city: defaultAddress.city,
+      postalCode: defaultAddress.postalCode || "",
+      country: defaultAddress.country || "Bangladesh",
+    }));
+  }, [savedAddresses]);
 
   const subtotal = cartItems.reduce(
     (total, item) => total + item.price * item.quantity,
@@ -248,6 +279,59 @@ export default function Checkout() {
                 Contact & Shipping Information
               </h2>
             </div>
+
+            {savedAddresses.length > 0 && (
+              <div className="mb-8">
+                <label
+                  htmlFor="savedAddress"
+                  className="block text-[10px] uppercase tracking-[0.15em] text-neutral-500 mb-3"
+                >
+                  Saved Address
+                </label>
+
+                <select
+                  id="savedAddress"
+                  defaultValue=""
+                  onChange={(event) => {
+                    const selectedAddress = savedAddresses.find(
+                      (address) => address._id === event.target.value,
+                    );
+
+                    if (!selectedAddress) {
+                      return;
+                    }
+
+                    setFormData((current) => ({
+                      ...current,
+                      name: selectedAddress.recipientName,
+                      phone: selectedAddress.phone,
+                      address: selectedAddress.addressLine1,
+                      city: selectedAddress.city,
+                      postalCode: selectedAddress.postalCode || "",
+                      country: selectedAddress.country || "Bangladesh",
+                    }));
+
+                    setErrors({});
+                  }}
+                  className="w-full h-12 px-4 border border-black/15 bg-transparent text-sm outline-none focus:border-black"
+                >
+                  <option value="">Select a saved address</option>
+
+                  {savedAddresses.map((address) => (
+                    <option key={address._id} value={address._id}>
+                      {address.label}
+                      {address.isDefault ? " — Default" : ""}
+                      {" — "}
+                      {address.area}, {address.city}
+                    </option>
+                  ))}
+                </select>
+
+                <p className="mt-2 text-[10px] text-neutral-500">
+                  Select a saved address to fill in your shipping details.
+                </p>
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="mt-8 space-y-8">
               {/* Name + Email */}

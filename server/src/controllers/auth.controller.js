@@ -128,7 +128,85 @@ const loginUser = async (req, res) => {
   }
 };
 
+const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { name, email } = req.body;
+
+    // Basic validation
+    if (!name || !email) {
+      return res.status(400).json({
+        success: false,
+        message: "Name and email are required",
+      });
+    }
+
+    // Normalize values
+    const normalizedName = name.trim();
+    const normalizedEmail = email.toLowerCase().trim();
+
+    if (!normalizedName || !normalizedEmail) {
+      return res.status(400).json({
+        success: false,
+        message: "Name and email are required",
+      });
+    }
+
+    // Check whether email belongs to another user
+    const existingUser = await User.findOne({
+      email: normalizedEmail,
+      _id: { $ne: userId },
+    });
+
+    if (existingUser) {
+      return res.status(409).json({
+        success: false,
+        message: "Email is already in use",
+      });
+    }
+
+    // Update only allowed profile fields
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        name: normalizedName,
+        email: normalizedEmail,
+      },
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    console.error("Update profile failed:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update profile",
+    });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
+  updateProfile,
 };
