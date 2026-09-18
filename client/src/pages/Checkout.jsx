@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { clearCart } from "../features/cart/cartSlice";
 import { getAddresses } from "../features/addresses/addressThunks";
-import { createOrder } from "../services/orderApi";
+import { createOrder, getShippingQuote } from "../services/orderApi";
 
 export default function Checkout() {
   const cartItems = useSelector((state) => state.cart.items);
@@ -22,6 +22,8 @@ export default function Checkout() {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderError, setOrderError] = useState("");
+  const [shipping, setShipping] = useState(0);
+  const [shippingLoading, setShippingLoading] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -81,7 +83,6 @@ export default function Checkout() {
     0,
   );
 
-  const shipping = 0;
   const total = subtotal + shipping;
 
   // --------------------------------
@@ -101,6 +102,32 @@ export default function Checkout() {
       [name]: "",
     }));
   };
+
+  useEffect(() => {
+    if (!formData.city.trim()) {
+      setShipping(0);
+      return;
+    }
+
+    const fetchShippingQuote = async () => {
+      try {
+        setShippingLoading(true);
+
+        const data = await getShippingQuote(formData.city);
+
+        if (data.success) {
+          setShipping(data.shipping);
+        }
+      } catch (error) {
+        console.error("Shipping quote failed:", error);
+        setShipping(0);
+      } finally {
+        setShippingLoading(false);
+      }
+    };
+
+    fetchShippingQuote();
+  }, [formData.city]);
 
   // --------------------------------
   // Validate form
@@ -670,7 +697,7 @@ export default function Checkout() {
                         </span>
 
                         <span className="text-sm text-neutral-900">
-                          ${(item.price * item.quantity).toLocaleString()}
+                          ৳{(item.price * item.quantity).toLocaleString()}
                         </span>
                       </div>
                     </div>
@@ -683,7 +710,7 @@ export default function Checkout() {
                   <span className="text-neutral-500">Subtotal</span>
 
                   <span className="text-neutral-900">
-                    ${subtotal.toLocaleString()}
+                    ৳{subtotal.toLocaleString()}
                   </span>
                 </div>
 
@@ -691,7 +718,11 @@ export default function Checkout() {
                   <span className="text-neutral-500">Shipping</span>
 
                   <span className="text-neutral-900">
-                    {shipping === 0 ? "Free" : `$${shipping.toLocaleString()}`}
+                    {shippingLoading
+                      ? "Calculating..."
+                      : shipping === 0
+                        ? "Free"
+                        : `৳${shipping.toLocaleString()}`}
                   </span>
                 </div>
 
@@ -701,7 +732,7 @@ export default function Checkout() {
                   </span>
 
                   <span className="text-lg text-neutral-900">
-                    ${total.toLocaleString()}
+                    ৳{total.toLocaleString()}
                   </span>
                 </div>
               </div>

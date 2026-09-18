@@ -4,6 +4,8 @@ import {
   register,
   login,
   getCurrentUser,
+  updateUserProfile,
+  updateUserPassword,
 } from "./authThunks";
 
 const initialState = {
@@ -106,15 +108,37 @@ const authSlice = createSlice({
         state.token = null;
         state.user = null;
         state.isAuthenticated = false;
+      })
+
+      .addCase(updateUserProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateUserProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+      })
+      .addCase(updateUserProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(updateUserPassword.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateUserPassword.fulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(updateUserPassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });
 
-export const {
-  setCredentials,
-  logout,
-  clearAuthError,
-  setAuthInitialized,
-} = authSlice.actions;
+export const { setCredentials, logout, clearAuthError, setAuthInitialized } =
+  authSlice.actions;
 
 export default authSlice.reducer;

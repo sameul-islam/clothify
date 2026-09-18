@@ -6,6 +6,14 @@ export const createOrder = async (orderData) => {
   return res.data;
 };
 
+export const getShippingQuote = async (city) => {
+  const res = await api.post("/orders/shipping-quote", {
+    city,
+  });
+
+  return res.data;
+};
+
 export const fetchSingleOrder = async (id) => {
   const res = await api.get(`/orders/${id}`);
 

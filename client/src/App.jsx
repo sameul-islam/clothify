@@ -18,6 +18,8 @@ import MyOrders from "./pages/MyOrders";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Addresses from "./pages/Addresses";
+import Account from "./pages/Account";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -50,13 +52,47 @@ const App = () => {
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/product/:slug" element={<ProductDetailsPage />} />
           <Route path="/cart" element={<Cart />} />
-          <Route path="/checkout" element={<Checkout />} />
           <Route
             path="order-confirmation/:id"
             element={<OrderConfirmation />}
           />
-          <Route path="/my-orders" element={<MyOrders />} />
-          <Route path="/addresses" element={<Addresses/>} />
+
+          <Route
+            path="/checkout"
+            element={
+              <ProtectedRoute>
+                <Checkout />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/my-orders"
+            element={
+              <ProtectedRoute>
+                <MyOrders />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/addresses"
+            element={
+              <ProtectedRoute>
+                <Addresses />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/account"
+            element={
+              <ProtectedRoute>
+                <Account />
+              </ProtectedRoute>
+            }
+          />
+
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Routes>
