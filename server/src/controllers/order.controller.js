@@ -339,9 +339,33 @@ const createOrder = async (req, res) => {
   }
 };
 
+const getAllOrders = async (req, res) => {
+  try {
+    const orders = await Order.find()
+      .sort({
+        createdAt: -1,
+      })
+      .populate("user", "name email");
+
+    return res.status(200).json({
+      success: true,
+      count: orders.length,
+      orders,
+    });
+  } catch (error) {
+    console.error("Get all orders failed:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch orders",
+    });
+  }
+};
+
 module.exports = {
   createOrder,
   getSingleOrder,
   getMyOrders,
   getShippingQuote,
+  getAllOrders,
 };
